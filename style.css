@@ -1,0 +1,54 @@
+.top-nav {
+    position: sticky; top: 0; background: rgba(5,5,5,0.9); backdrop-filter: blur(15px);
+    padding: 15px 20px; border-bottom: 1px solid #222; z-index: 100;
+    display: flex; align-items: center; flex-wrap: wrap; gap: 15px;
+    justify-content: space-between;
+}
+
+.user-stats {
+    display: flex; align-items: center;
+    gap: 20px;
+}
+
+.level-circle {
+    width: 45px; height: 45px; border: 2px solid var(--neon);
+    border-radius: 50%; display: flex; justify-content: center; align-items: center;
+    font-family: 'Orbitron'; color: var(--neon); font-weight: bold;
+}
+
+.xp-wrapper { flex: 1; max-width: 300px; }
+
+.logout-btn {
+    background: none !important;
+    border: 1px solid #444 !important;
+    color: #666 !important;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    font-size: 0.75rem !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 80, 80, 0.1) !important;
+    border-color: #ff5050 !important;
+    color: #ff5050 !important;
+}
+
+.welcome-banner {
+    text-align: center;
+    padding: 10px 20px;
+    background: linear-gradient(90deg, rgba(112,0,255,0.1), rgba(0,242,254,0.1));
+    color: var(--neon);
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(112,0,255,0.2);
+    animation: fadeInDown 0.3s ease;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
