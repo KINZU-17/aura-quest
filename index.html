@@ -1,81 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AuraQuest | Warrior Edition</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#7000ff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://fonts.googleapis.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com;">
 </head>
 <body>
     <header class="top-nav" role="banner">
-        <div class="user-stats">
-            <div>
-                <h2 id="player-rank">Recruit</h2>
-                <div class="streak-badge">🔥 <span id="streak-count">0</span> Day Streak</div>
+        <div class="nav-stats">
+            <div class="user-info">
+                <h2 id="player-rank" class="user-rank">Recruit</h2>
+                <div class="rank-badge">
+                    <span>🔥</span> <span id="streak-count">0</span> Day Streak
+                </div>
             </div>
-            <div class="level-circle"><span id="level">1</span></div>
+            <div class="level-indicator">
+                <span id="level" class="level-number">1</span>
+            </div>
         </div>
-        <div class="xp-wrapper">
-            <div class="bar-container"><div id="xp-fill"></div></div>
+        <div class="xp-section">
+            <div class="xp-label">Battle Points</div>
+            <div class="xp-bar-container">
+                <div id="xp-fill" class="xp-bar-fill"></div>
+            </div>
             <div class="xp-text"><span id="current-xp">0</span> / <span id="next-level-xp">100</span> XP</div>
         </div>
-        <button class="logout-btn" style="background:none;border:none;color:#00f2fe;font-size:0.7rem;cursor:pointer;padding:4px 8px;margin-left:10px;text-decoration:underline;" title="Logout">Logout</button>
+        <button class="logout-btn" id="logout-btn">Logout</button>
     </header>
 
     <main class="dashboard" role="main">
+        <div class="instructor-controls">
+            <button id="instructor-btn" class="instructor-btn" title="Audio Instructor">🔇 OFF</button>
+            <span id="instructor-status" class="instructor-status">(inactive)</span>
+        </div>
+
+        <div id="instructor-panel" class="instructor-panel">
+            <h4>Audio Instructor</h4>
+            <div class="instructor-setting">
+                <label>Voice Type</label>
+                <select id="voice-type">
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                </select>
+            </div>
+            <div class="instructor-setting">
+                <label>Volume: <span id="volume-val">80%</span></label>
+                <input type="range" id="voice-volume" min="0" max="1" step="0.1" value="0.8">
+            </div>
+            <div class="instructor-setting">
+                <label>Speed: <span id="rate-val">1.0x</span></label>
+                <input type="range" id="voice-rate" min="0.5" max="2" step="0.1" value="1.0">
+            </div>
+            <div class="instructor-support">
+                <small id="tts-support">Checking...</small>
+            </div>
+        </div>
+
         <div class="step-card" id="step-section" role="button" tabindex="0" aria-label="Activate step counter">
-            <p class="label">PASSIVE GAINS</p>
-            <h1 id="step-count">0</h1>
-            <p>STEPS TODAY</p>
-            <small id="step-status">Tap to Activate Sensors</small>
+            <p class="step-label">PASSIVE GAINS</p>
+            <div class="step-count" id="step-count">0</div>
+            <div class="step-unit">STEPS TODAY</div>
+            <p class="step-status" id="step-status">Tap to Activate Sensors</p>
         </div>
 
         <h3 class="section-title">MUSCLE QUESTS</h3>
         <div id="workout-list"></div>
 
         <h3 class="section-title">RECENT GLORY</h3>
-        <div id="history-list"></div>
-
+        <div id="history-list" class="history-list"></div>
+        
         <button class="reset-btn" id="reset-btn">Reset Character</button>
     </main>
-            <div class="level-circle"><span id="level">1</span></div>
-        </div>
-        <div class="xp-wrapper">
-            <div class="bar-container"><div id="xp-fill"></div></div>
-            <div class="xp-text"><span id="current-xp">0</span> / <span id="next-level-xp">100</span> XP</div>
-        </div>
-    </header>
 
-    <main class="dashboard" role="main">
-        <div class="step-card" id="step-section" role="button" tabindex="0" aria-label="Activate step counter">
-            <p class="label">PASSIVE GAINS</p>
-            <h1 id="step-count">0</h1>
-            <p>STEPS TODAY</p>
-            <small id="step-status">Tap to Activate Sensors</small>
-        </div>
-
-        <h3 class="section-title">MUSCLE QUESTS</h3>
-        <div id="workout-list"></div>
-
-        <h3 class="section-title">RECENT GLORY</h3>
-        <div id="history-list"></div>
-        
-         <button class="reset-btn" id="reset-btn">Reset Character</button>
-    </div>
-
-    <div id="timer-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="timer-name">
-        <div class="modal-box">
-            <h2 id="timer-name">EXERCISE</h2>
-            <div id="countdown-display" aria-live="polite">00</div>
-            <button class="quit-btn" id="quit-btn" type="button">ABANDON</button>
+    <div id="timer-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="timer-name">
+        <div class="modal-content">
+            <div class="modal-workout-name" id="timer-name">EXERCISE</div>
+            <div id="countdown-display" class="countdown-display" aria-live="polite">00</div>
+            <button class="modal-btn" id="quit-btn" type="button">ABANDON</button>
         </div>
     </div>
 
     <script src="workouts.js"></script>
+    <script src="features.js"></script>
+    <script src="instructor.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

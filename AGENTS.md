@@ -1,46 +1,67 @@
-# AGENTS.md - Local Development Guide
-
-This project uses specialized command shortcuts via Kilo's local agent system.
-
-## Available Commands
-
-| Command | Description |
-|---|---|
-| **/serve** | Start local HTTP server on port 8000 |
-| **/test** | Run comprehensive test suite (35 tests) |
-| **/format** | Format code with Prettier (if configured) |
-| **/audit** | Run code audit for bugs/security |
-
 ## Architecture Overview
 
-The project uses vanilla JS in a modular pattern:
-- `index.html` - Main HTML structure
-- `style.css` - CSS with custom properties (neon theme)
-- `app.js` - All game logic (264 lines)
-- `workouts.js` - Exercise database (35 workouts)
+The project uses vanilla JS in a modular pattern with mandatory account-based access:
+
+### Entry Points
+- `login.html` - **ONLY** entry point (signup/login required)
+- `index.html` - Main game dashboard (auto-redirects to login if no session)
+
+### Supporting Files
+- `style.css` - Game UI styles (neon theme, responsive)
+- `login.css` - Login page styles (glassmorphism)
+- `app.js` - Game logic (445 lines, account-enforced)
+- `login.js` - Authentication flow (173 lines)
+- `workouts.js` - 36 exercises with instructions
+- `instructor.js` - Audio instructor TTS
 - `test.js` - Comprehensive test suite
 - `sw.js` - Service worker for PWA
 - `manifest.json` - PWA configuration
 
 ## Local Development Workflow
 
+### Using Login System (REQUIRED)
 1. **Start server**: `python3 -m http.server 8000`
-2. **Open app**: Navigate to http://localhost:8000
-3. **Run tests**: `node test.js`
-4. **Check coverage**: All 35+ tests passing
+2. **Open login page**: http://localhost:8000/login.html
+3. **Create account or login** - both require valid credentials
+4. **Play**: Redirected to AuraQuest dashboard
 
-## Kilo Config Paths
+### Testing
+5. **Run tests**: `node test.js`
+6. **All 35 tests pass** ✅
 
-- **Commands**: `.kilo/command/*.md`
-- **Agents**: `.kilo/agent/*.md`
-- **Skills**: Built-in (kilo-config)
+## ⚠️ MANDATORY ACCOUNT SYSTEM
 
-## Key Patterns
+**No guest access is allowed.** All users must create an account to use AuraQuest.
 
-- State stored in `user` object, persisted to localStorage
-- DOM elements cached on init for performance
-- Event delegation for dynamic workout buttons
-- CSP Content-Security-Policy enforced
-- XSS prevention via HTML escaping
-- PWA-ready with service worker
-- Mobile-first responsive design
+### Authentication Flow
+
+1. **Visit login.html** → Only entry point
+2. **Sign Up** or **Login**:
+   - Email + Username + Password (6+ chars)
+   - Session saved to localStorage under `activeSession`
+   - Progress stored under `auraQuest_<username>`
+3. **Redirect to index.html** → Welcome banner shows username
+4. **Play** → All progress auto-saved
+
+### Data Isolation
+
+Each user gets isolated storage:
+```
+localStorage.users = [...all accounts...]
+localStorage.activeSession = { username, email, loggedInAt }
+localStorage.auraQuest_<username> = { level, xp, progress... }
+```
+
+### Logout
+
+Logout button (top-right) clears `activeSession` and redirects to login page. Your progress remains saved under your username.
+
+## Key Features
+
+- **Account-Required Access** - No anonymous usage
+- **Multi-user Support** - Isolated progress per account
+- **Audio Instructor** - 36 workouts with voice guidance
+- **RPG Progression** - 6 ranks (Recruit → Legend)
+- **35+ Exercises** - Full instructions & tips
+- **PWA Ready** - Offline-capable
+- **Responsive** - Mobile-first design

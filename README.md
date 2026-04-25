@@ -1,161 +1,381 @@
-# 🎯 AuraQuest | Warrior Edition
+# 🎮 AURAQUEST - Gamified Fitness Tracker
 
-A gamified fitness tracker that turns workouts into RPG-style quests. Built with vanilla JavaScript, HTML, and CSS. No frameworks, no dependencies, just pure progress.
+**The Ultimate RPG-Style Workout Experience**
 
----
-
-## ⚔️ Features
-
-### Core Gameplay
-- **Muscle Quests** - Complete bodyweight exercises to earn XP and level up
-- **Rank System** - Progress through 6 ranks: Recruit → Squire → Warrior → Knight → Champion → Legend
-- **Streak Tracking** - Build daily habits with visible streak counters
-- **Passive Gains** - Automatic step counting via device motion sensors (20 steps = 2 XP)
-- **History Feed** - Track your last 5 completed activities
-- **Persistence** - All progress saved locally via localStorage
-
-### Combat Types
-- **Rep-Based Quests** - Diamond Pushups, Archer Pushups, Bulgarian Split Squats
-- **Timed Holds** - Plank Jacks (45s), Superman Hold (30s), Hollow Body Rock (40s)
-
-### Technical Highlights
-- Zero dependencies (vanilla JS)
-- Mobile-first responsive design
-- Dark UI with neon accents
-- Motion sensor integration for step detection
-- Smooth animations and transitions
+Transform your fitness journey into an epic quest! AuraQuest turns bodyweight exercises into a full-featured gamification system with achievements, daily challenges, progression tracking, and more.
 
 ---
 
-## 🚀 Quick Start
+## ✨ Features
 
-Since this is pure HTML/CSS/JS, just open `index.html` in any modern browser. No build process, no installation required.
+### 🏋️ Expanded Workout Database (35+ Exercises)
 
-### For Mobile Development
-```bash
-# Serve via any static server
-python3 -m http.server 8000
-# OR
-npx serve
-```
+Comprehensive no-equipment exercises across multiple categories:
 
-Then navigate to `http://localhost:8000`
+**Upper Body**
+- Diamond Pushups, Archer Pushups, Pike Pushups
+- Tricep Dips, Pseudo Planche Pushups
+- Wall Handstand Hold, Pull-Up Negatives
+- Inverted Rows, Australian Pull-Ups
 
-### Activate Step Tracking
-1. Open on a mobile device with motion sensors
-2. Tap the "PASSIVE GAINS" card
-3. Grant motion permission when prompted
-4. Walk - every 20 steps earns 2 XP
+**Lower Body**
+- Bulgarian Split Squats, Pistol Squats, Jump Squats
+- Wall Sit, Nordic Curl Negatives
+- Single Leg Glute Bridges
+
+**Core**
+- Plank Jacks, Superman Hold, Hollow Body Rock
+- Dragon Flags, Ab Wheel Rollouts, L-Sit Hold
+- Russian Twists, Hanging Leg Raises
+- Forearm Plank, Side Plank, V-Ups Hold
+
+**Full Body & Cardio**
+- Burpees, Mountain Climbers, Burpee Pull-Up Negatives
+- Bear Crawl Hold
+
+**Mobility**
+- Deep Squat Hold, Pike Stretch, Spiderman Lunge
+
+Each exercise includes:
+- Difficulty rating (1-5 stars)
+- XP rewards
+- Detailed step-by-step instructions
+- Expert tips and form cues
+- Timed or rep-based variations
 
 ---
 
-## 📁 Project Structure
+### 🎯 Daily Challenges System
 
-```
-aura-quest/
-├── index.html          # Main app layout (53 lines)
-├── app.js              # All game logic (162 lines)
-├── style.css           # Theme & responsive styles (58 lines)
-├── workouts.js         # Expansion workout definitions (reserved)
-└── README.md           # This file
-```
+Get a random daily challenge each day! Complete them for bonus XP:
+
+- **Chest Day** - 100 XP bonus
+- **Leg Destroyer** - 150 XP bonus
+- **Core Master** - 120 XP bonus
+- **Cardio Blast** - 100 XP bonus
+- **Full Body Quest** - 130 XP bonus
+
+Challenges reset daily and provide focused workout routines.
 
 ---
 
-## 🧠 Architecture
+### 🏆 Achievement & Badge System
 
-### State Management
-Single `user` object persisted to localStorage:
-```js
-{
-  level, xp, xpToNext, steps, streak,
-  lastDate, history: [], rank
-}
-```
+Unlock 9 achievements as you progress:
 
-### XP Progression
-- `nextLevel = Math.floor(currentXpToNext × 1.5)`
-- Each level scales difficulty exponentially
+- 🥋 **Novice** - Complete your first workout
+- 💪 **Persistent** - Complete 10 workouts
+- ⚔️ **Warrior** - Complete 50 workouts
+- 👑 **Legend** - Complete 100 workouts
+- 🔥 **On Fire** - Maintain a 7-day streak
+- ⚡ **Unstoppable** - Maintain a 30-day streak
+- ⭐ **Ascended** - Reach level 10
+- 🚶 **Wanderer** - Walk 1,000 steps
+- ✅ **Disciplined** - Complete daily challenge all week
 
-### Rank Tiers
-| Level Range | Rank |
-|---|---|
-| 1-4 | Recruit |
-| 5-9 | Squire |
-| 10-14 | Warrior |
-| 15-19 | Knight |
-| 20-24 | Champion |
-| 25+ | Legend |
+Achievements unlock with visual popups and celebratory sound effects!
 
-### Pedometer Algorithm
-- Uses `accelerationIncludingGravity` magnitude threshold > 13
-- Prevents double-counting with 350ms cooldown
-- Awards bonus XP every 20 steps (gated by debounce)
+---
+
+### 🎨 Enhanced UI & Animations
+
+**Modern Design**
+- Gradient backgrounds with glassmorphism effects
+- Color-coded muscle groups (green=upper, yellow=lower, red=core, cyan=cardio)
+- Dynamic difficulty stars for each exercise
+- Smooth hover effects and transitions
+
+**Animations**
+- Level-up flash effects
+- XP bar gradient transitions
+- Workout card slide-in animations
+- Modal popups with scale-up effects
+- Countdown timer pulse animations
+- Achievement unlock fanfare
+
+---
+
+### 🔊 Sound Effects & Audio Feedback
+
+*Optional* audio feedback system with:
+- **Level-up** - Ascending tone sequence
+- **Workout Complete** - Success tone
+- **Achievement Unlocked** - Fanfare sequence
+- **Countdown Tick** - Subtle beep during timers
+
+Toggle sound on/off anytime. Uses Web Audio API for dynamic sound generation.
+
+---
+
+### 📊 Stats Dashboard
+
+Real-time statistics display:
+- Total workouts completed
+- Current daily streak
+- Achievement progress (e.g., 7/9 unlocked)
+- Total steps walked
+- All data synced with user account
+
+---
+
+### 🎯 RPG Progression System
+
+- **Levels** - Increase through XP gain (1.5x multiplier each level)
+- **Ranks** - Unlock new ranks as you level up:
+  - Recruit → Squire → Warrior → Knight → Champion → Legend
+- **XP Bar** - Visual progress toward next level
+- **Streaks** - Track daily consistency for extra motivation
+
+---
+
+### 📱 Mobile-First Design
+
+- Fully responsive layout for all screen sizes
+- Touch-friendly buttons and interactive elements
+- Optimized for smartphone, tablet, and desktop
+- Accessibility features with ARIA labels
+- Support for prefers-reduced-motion
+
+---
+
+### 🚶 Step Counter (Pedometer)
+
+- **Passive Gains** - Earn XP by walking
+- 20 steps = 2 XP
+- Uses device accelerometer
+- Automatic streak tracking
+- Works in background
+
+---
+
+### 🗣️ Audio Instructor (Optional)
+
+Text-to-speech instructor guidance:
+- Motivational voice feedback
+- Voice type selection (male/female)
+- Volume and speech rate controls
+- Countdown audio cues
+- Workout-specific instructions
 
 ---
 
 ## 🎮 Game Mechanics
 
-1. **Select a quest** from the Muscle Quests section
-2. **For timed exercises**, modal appears with countdown
-3. **Complete** → XP added → Progress bar updates
-4. **Level up** when XP bar fills → auto-reset with scaled threshold
-5. **Streak increments** once daily per session
-6. **Walk** → Earn passive XP automatically
+### XP System
+- Each exercise rewards 25-100 XP depending on difficulty
+- Bonus XP for completing daily challenges
+- Extra XP multipliers at milestone levels
+
+### Difficulty Scaling
+- Star ratings help you choose appropriate challenges
+- Progress from basic (★) to elite (★★★★★) exercises
+- Timed exercises build endurance, rep-based build strength
+
+### Streak Mechanics
+- Land bonus motivation at 7+ days
+- 30-day streak unlock "Unstoppable" achievement
+- Automatic reset if you miss a day
 
 ---
 
-## 🔮 Future Roadmap
+## 🛠️ Technical Features
 
-### Planned Features
-- Workout categories (Push, Pull, Legs, Core)
-- Rest timer between sets
-- Custom workout builder
-- Graph visualization of progress
-- Export data (JSON/CSV)
-- Sound effects & haptic feedback
-- PWA support for offline use
-- Cloud sync (optional)
+### Local Storage & Data Persistence
+- All progress saved automatically per user account
+- Encrypted with username-based keys
+- Synced with login system
+- 5 workout history items displayed
 
-### Expansion Ideas
-- Equipment-based exercises (dumbbells, bands)
-- Weekly challenges
-- Achievements/badges system
-- Friend leaderboards
-- Integration with Apple Health / Google Fit
+### Architecture
+- Modular JavaScript with separate concerns:
+  - `app.js` - Core game logic & UI (600+ lines)
+  - `workouts.js` - Exercise database (35+ exercises)
+  - `features.js` - Achievements & audio system
+  - `instructor.js` - Text-to-speech integration
+- CSS custom properties for theming (500+ lines of styles)
+- Progressive enhancement
+
+### Browser Support
+- Chrome/Edge (90+)
+- Firefox (88+)
+- Safari (14+)
+- Mobile browsers with accelerometer support
 
 ---
 
-## 🛠️ Development Notes
+## 📋 How to Use
 
-### Code Style
-- Minimal, readable functions (< 20 lines each)
-- Event-driven architecture
-- No external libraries
-- Mobile-first CSS with CSS variables
+### Getting Started
+1. **Sign In** - Create your warrior account at login.html
+2. **Choose Workouts** - Browse the quest list and select exercises
+3. **Complete Challenges** - Follow on-screen instructions and complete reps/hold times
+4. **Earn Rewards** - Gain XP, level up, unlock achievements!
+5. **Build Streaks** - Return daily to maintain your streak
 
-### Adding New Workouts
-Edit `app.js` line 2-9:
-```js
-{ id: 7, name: "Pistol Squats", goal: "5 Per Leg", xp: 75, muscle: "Quads", isTimed: false }
-// or
-{ id: 8, name: "Wall Sit", duration: 60, xp: 50, muscle: "Quads", isTimed: true }
+### Tips for Success
+- ⭐ Focus on form over speed - proper technique = more XP potential
+- 🔥 Build a daily habit - even 5-10 minutes adds up
+- 🎯 Follow the daily challenge - themed workouts keep it varied
+- 📈 Progress gradually - start with ★★ exercises before ★★★★★
+- 🎧 Enable audio for motivation and countdown cues
+
+---
+
+## 📈 Progress Metrics
+
+Track your fitness journey:
+
+| Metric | Value |
+|--------|-------|
+| Total Exercises | 35+ |
+| Max Difficulty | 5 stars |
+| Max Level | Unlimited |
+| XP per Level | 1.5x multiplier |
+| Daily Challenges | 5 rotating |
+| Achievements | 9 total |
+| Streak Bonus | Motivation + badge |
+
+---
+
+## 🎨 Customization
+
+### Theme Colors
+Edit `style.css` custom properties:
+```css
+:root {
+  --accent-purple: #7000ff;
+  --accent-cyan: #00f2fe;
+  --accent-green: #00ff88;
+}
+```
+
+### Add Custom Exercises
+Edit `workouts.js` and add to `workoutData`:
+```javascript
+{
+  id: 36,
+  name: "Your Exercise",
+  muscle: "Target Area",
+  difficulty: 3,
+  xp: 50,
+  goal: "12 Reps",
+  isTimed: false,
+  instructions: [...],
+  tips: "Form tip here"
+}
 ```
 
 ---
 
-## 📝 License
+## 🚀 Future Enhancements
 
-MIT License - Free to use, modify, and distribute.
+Potential additions:
+- 📊 Charts & progress graphs
+- 🏅 Leaderboards
+- 🎬 Video exercise tutorials
+- 👥 Social sharing
+- 📱 PWA offline support
+- 💾 Data export/import
+- 🎵 Custom background music
+- 🌙 Dark/light theme toggle
 
 ---
 
-## 💎 Why This Exists
+## 🐛 Troubleshooting
 
-Most fitness apps are bloated, subscription-based, or overly complex. AuraQuest strips fitness tracking down to its core psychology: **progress → reward → repeat**. No social pressure, no paywalls, just you versus your past self.
+**"Sensors not available"**
+- Check browser support for accelerometer
+- Grant permission when prompted
+- Some browsers require HTTPS for security
 
-Built in one weekend to prove that sometimes the simplest tools are the most powerful.
+**Progress not saving**
+- Ensure you're logged in (check "Welcome back" message)
+- Clear browser cache and try again
+- Check localStorage isn't disabled
+
+**Audio not working**
+- Grant microphone/audio permissions if prompted
+- Check if audio is toggled ON in instructor panel
+- Some browsers require user interaction first
+
+**Exercises not displaying**
+- Verify `workouts.js` is loaded (check browser console)
+- Refresh the page
+- Clear cache and reload
 
 ---
 
-**Ready to ascend?** Open `index.html` and begin your first quest.
+## 📄 Files Overview
+
+```
+├── index.html           # Main app interface
+├── login.html          # User authentication
+├── login.js            # Login logic
+├── login.css           # Login styling
+├── app.js              # Core game mechanics (600+ lines)
+├── workouts.js         # Exercise database (35+ exercises)
+├── features.js         # Achievements & audio system
+├── instructor.js       # Text-to-speech instructor
+├── style.css           # Complete UI styling (500+ lines)
+├── manifest.json       # PWA manifest
+├── sw.js               # Service Worker
+├── README.md           # This file
+└── AGENTS.md           # Development notes
+```
+
+---
+
+## 🎯 Development Info
+
+**Built with:**
+- Vanilla JavaScript (no frameworks)
+- CSS3 with animations & gradients
+- Web Audio API for sound
+- Device Motion API for step tracking
+- LocalStorage for persistence
+
+**Code Quality:**
+- CSP-compliant (no inline scripts in HTML)
+- Modular architecture
+- Extensive comments and documentation
+- Mobile-first responsive design
+- Accessibility features (ARIA labels)
+
+---
+
+## 🤝 Contributing
+
+To add features:
+1. Add exercises to `workouts.js` with full instructions
+2. Add achievements to `features.js`
+3. Update styles in `style.css`
+4. Test on mobile and desktop
+5. Update this README with new features
+
+---
+
+## 📞 Support
+
+Encountering issues? Check:
+1. Browser console for errors (F12)
+2. localStorage limits (clear old data if needed)
+3. Login status - must be signed in
+4. Cache - try refreshing with Ctrl+Shift+R
+
+---
+
+## 🎮 Start Your Quest!
+
+**Ready to become a legend?** Sign in now and begin your fitness journey! Every rep counts. Every day matters. Every achievement brings you closer to becoming a true warrior.
+
+⚔️ **"From Recruit to Legend in 100 Workouts"** ⚔️
+
+---
+
+**Version:** 2.0 Enhanced Edition  
+**Last Updated:** April 2026  
+**Creator:** Your Fitness AI  
+**License:** MIT
+
+*Transform your fitness journey. Master your body. Become legendary.*
+- Keyboard navigable
