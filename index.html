@@ -6,7 +6,7 @@
     <title>AuraQuest | Warrior Edition</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap">
     <link rel="stylesheet" href="style.css">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://fonts.googleapis.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; media-src https://www.soundhelix.com;">
 </head>
 <body>
     <header class="top-nav" role="banner">
@@ -16,6 +16,7 @@
                 <div class="rank-badge">
                     <span>🔥</span> <span id="streak-count">0</span> Day Streak
                 </div>
+                <div id="user-star-rating" class="user-star-rating" title="Performance rating">★★★★★</div>
             </div>
             <div class="level-indicator">
                 <span id="level" class="level-number">1</span>
@@ -28,7 +29,12 @@
             </div>
             <div class="xp-text"><span id="current-xp">0</span> / <span id="next-level-xp">100</span> XP</div>
         </div>
-        <button class="logout-btn" id="logout-btn">Logout</button>
+<button class="logout-btn" id="logout-btn">Logout</button>
+        <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌙</button>
+        <button class="leaderboard-toggle" id="leaderboard-toggle" title="Leaderboard">🏆</button>
+        <button class="music-toggle" id="music-toggle" title="Toggle background music">🔇</button>
+        <button class="rating-toggle" id="rating-toggle" title="Rate the app">⭐</button>
+        <button class="reminder-toggle" id="reminder-toggle" title="Enable workout reminders">🔔</button>
     </header>
 
     <main class="dashboard" role="main">
@@ -67,12 +73,26 @@
         </div>
 
         <h3 class="section-title">MUSCLE QUESTS</h3>
+        <div id="difficulty-selector"></div>
         <div id="workout-list"></div>
 
         <h3 class="section-title">RECENT GLORY</h3>
         <div id="history-list" class="history-list"></div>
         
         <button class="reset-btn" id="reset-btn">Reset Character</button>
+
+        <div class="share-panel">
+          <p class="share-label">Share Your AuraQuest Progress</p>
+          <div class="share-buttons">
+            <a href="#" class="share-btn twitter" target="_blank" rel="noopener noreferrer" title="Share on Twitter">𝕏</a>
+            <a href="#" class="share-btn facebook" target="_blank" rel="noopener noreferrer" title="Share on Facebook">f</a>
+            <a href="#" class="share-btn linkedin" target="_blank" rel="noopener noreferrer" title="Share on LinkedIn">in</a>
+            <button class="share-btn copy" id="copy-progress-btn" title="Copy progress to clipboard">📋</button>
+          </div>
+        </div>
+
+        <button class="export-csv-btn" id="export-csv-btn">💾 Export Workout History (CSV)</button>
+
     </main>
 
     <div id="timer-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="timer-name">
@@ -83,9 +103,37 @@
         </div>
     </div>
 
+    <div id="leaderboard-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="leaderboard-title">
+        <div class="modal-content leaderboard-content">
+            <button class="modal-close" id="close-leaderboard" aria-label="Close">&times;</button>
+            <h3 class="leaderboard-title" id="leaderboard-title">🏆 Leaderboard</h3>
+            <div id="leaderboard-list" class="leaderboard-list"></div>
+        </div>
+    </div>
+
+    <div id="rating-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="rating-title">
+        <div class="modal-content rating-content">
+            <button class="modal-close" id="close-rating" aria-label="Close">&times;</button>
+            <h3 class="rating-title" id="rating-title">⭐ Rate AuraQuest</h3>
+            <div class="rating-prompt">
+                <p id="rating-prompt-text">How do you like the app?</p>
+                <div class="stars-container" id="stars-container">
+                    <span class="star" data-value="1">☆</span>
+                    <span class="star" data-value="2">☆</span>
+                    <span class="star" data-value="3">☆</span>
+                    <span class="star" data-value="4">☆</span>
+                    <span class="star" data-value="5">☆</span>
+                </div>
+            </div>
+            <div class="rating-info" id="current-rating-display"></div>
+            <button class="modal-btn rating-submit" id="rating-submit" disabled>Submit Rating</button>
+        </div>
+    </div>
+
     <script src="workouts.js"></script>
     <script src="features.js"></script>
     <script src="instructor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

@@ -666,15 +666,10 @@ const XP_TIERS = {
 
 // Export for use in main app
 if (typeof window !== 'undefined') {
-  window.workoutData = workoutDatabase;
+  window.workoutData = workoutData;
 }
 
 // For Node.js module usage
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { workoutDatabase, XP_TIERS };
-}
-
-// For Node.js module usage (future-proofing)
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { workoutDatabase, XP_TIERS };
+  module.exports = { workoutData, XP_TIERS };
 }

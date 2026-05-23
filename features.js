@@ -1,7 +1,10 @@
 /**
  * AURAQUEST - Enhanced Features Module
- * Handles achievements, daily challenges, sound effects, and animations
+ * Handles achievements, daily challenges, sound effects, animations, and progress charts
  */
+
+// Global chart instance
+let xpProgressChart = null;
 
 // ============================================
 // ACHIEVEMENT SYSTEM
@@ -407,6 +410,203 @@ function renderStatsPanel(user, achievements) {
 }
 
 // ============================================
+// PROGRESS CHART
+// ============================================
+function renderProgressChart(user) {
+  if (!user) return;
+
+  // Prepare data
+  const history = user.history.slice().reverse(); // oldest first
+  if (history.length === 0) {
+    // Show empty state
+    let container = document.getElementById('progress-chart-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'progress-chart-container';
+      container.className = 'chart-container';
+      const statsPanel = document.getElementById('stats-panel');
+      if (statsPanel && statsPanel.parentNode) {
+        statsPanel.parentNode.insertBefore(container, statsPanel.nextSibling);
+      } else {
+        const dashboard = document.querySelector('.dashboard');
+        if (dashboard) dashboard.appendChild(container);
+      }
+    }
+    container.innerHTML = '<p class="chart-error">Complete workouts to see your progress chart.</p>';
+    // Destroy chart if exists
+    if (xpProgressChart) {
+      xpProgressChart.destroy();
+      xpProgressChart = null;
+    }
+    return;
+  }
+
+  // Find or create container
+  let container = document.getElementById('progress-chart-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'progress-chart-container';
+    container.className = 'chart-container';
+    const statsPanel = document.getElementById('stats-panel');
+    if (statsPanel && statsPanel.parentNode) {
+      statsPanel.parentNode.insertBefore(container, statsPanel.nextSibling);
+    } else {
+      const dashboard = document.querySelector('.dashboard');
+      if (dashboard) dashboard.appendChild(container);
+    }
+  }
+
+  // Clear previous canvas
+  container.innerHTML = '';
+
+  // Create canvas element
+  const canvas = document.createElement('canvas');
+  canvas.id = 'xp-progress-chart';
+  container.appendChild(canvas);
+
+  // Check if Chart.js is loaded
+  if (typeof Chart === 'undefined') {
+    const msg = document.createElement('p');
+    msg.className = 'chart-error';
+    msg.textContent = 'Chart library not loaded.';
+    container.appendChild(msg);
+    return;
+  }
+
+  // Destroy existing chart instance
+  if (xpProgressChart) {
+    xpProgressChart.destroy();
+    xpProgressChart = null;
+  }
+
+  const labels = history.map((h, idx) => h.time || `#${idx + 1}`);
+  const dataPoints = history.map(h => h.xp);
+
+  // Theme-aware colors
+  const style = getComputedStyle(document.documentElement);
+  const accentColor = style.getPropertyValue('--accent-cyan').trim() || '#00f2fe';
+  const bgColor = 'rgba(0, 242, 254, 0.1)';
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const isLight = theme === 'light';
+  const gridColor = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+  const tickColor = isLight ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)';
+
+  const ctx = canvas.getContext('2d');
+  xpProgressChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'XP Earned',
+        data: dataPoints,
+        borderColor: accentColor,
+        backgroundColor: bgColor,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4,
+        pointBackgroundColor: accentColor
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, labels: { color: tickColor } }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: gridColor },
+          ticks: { color: tickColor }
+        },
+        x: {
+          grid: { color: gridColor },
+          ticks: { color: tickColor }
+        }
+      }
+    }
+  });
+}
+
+// ============================================
+// LEADERBOARD SYSTEM
+// ============================================
+function gatherAllUsersStats() {
+  const users = JSON.parse(localStorage.getItem('users')) || [];
+  const leaderboardData = [];
+
+  users.forEach(u => {
+    const key = `auraQuest_${u.username}`;
+    const data = localStorage.getItem(key);
+    if (data) {
+      try {
+        const parsed = JSON.parse(data);
+        leaderboardData.push({
+          username: u.username,
+          level: parsed.level || 1,
+          xp: parsed.xp || 0,
+          workouts: parsed.history ? parsed.history.length : 0,
+          streak: parsed.streak || 0,
+          steps: parsed.steps || 0
+        });
+      } catch (e) {
+        console.warn('Failed to parse user data for', u.username);
+      }
+    }
+  });
+
+  return leaderboardData;
+}
+
+function renderLeaderboard() {
+  const data = gatherAllUsersStats();
+  if (!data || data.length === 0) {
+    const container = document.getElementById('leaderboard-list');
+    if (container) container.innerHTML = '<div class="leaderboard-empty">No users registered yet.</div>';
+    return;
+  }
+
+  // Sort by level DESC, then XP DESC
+  data.sort((a, b) => b.level - a.level || b.xp - a.xp);
+
+  const container = document.getElementById('leaderboard-list');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const session = localStorage.getItem('activeSession');
+  let currentUsername = '';
+  if (session) {
+    try { currentUsername = JSON.parse(session).username; } catch(e) {}
+  }
+
+  data.forEach((entry, index) => {
+    const rank = index + 1;
+    const isCurrent = entry.username === currentUsername;
+    const div = document.createElement('div');
+    div.className = 'leaderboard-entry' + (isCurrent ? ' highlight' : '');
+    div.innerHTML = `
+      <div class="leaderboard-rank">#${rank}</div>
+      <div class="leaderboard-name">${escapeHTML(entry.username)}</div>
+      <div class="leaderboard-stats">
+        <div class="leaderboard-stat">
+          <span class="leaderboard-stat-value">${entry.level}</span>
+          <span class="leaderboard-stat-label">Lvl</span>
+        </div>
+        <div class="leaderboard-stat">
+          <span class="leaderboard-stat-value">${entry.workouts}</span>
+          <span class="leaderboard-stat-label">Wkt</span>
+        </div>
+        <div class="leaderboard-stat">
+          <span class="leaderboard-stat-value">${entry.streak}</span>
+          <span class="leaderboard-stat-label">Str</span>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// ============================================
 // INITIALIZE FEATURES
 // ============================================
 function initializeFeatures() {
@@ -504,5 +704,8 @@ if (typeof window !== 'undefined') {
   window.saveAchievements = saveAchievements;
   window.updateAchievements = updateAchievements;
   window.renderStatsPanel = renderStatsPanel;
+  window.renderProgressChart = renderProgressChart;
+  window.gatherAllUsersStats = gatherAllUsersStats;
+  window.renderLeaderboard = renderLeaderboard;
   window.initializeFeatures = initializeFeatures;
 }

@@ -15,6 +15,21 @@ function showForm(formToShow) {
     formToShow.classList.add('active');
 }
 
+// Theme initialization
+(function initTheme() {
+    try {
+        const saved = localStorage.getItem('auraQuest_theme');
+        if (saved === 'light' || saved === 'dark') {
+            document.documentElement.setAttribute('data-theme', saved);
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    } catch (e) {
+        console.warn('Theme init failed:', e);
+        document.documentElement.setAttribute('data-theme', 'dark');
+    }
+})();
+
 signUpLink.addEventListener('click', (e) => {
     e.preventDefault();
     showForm(signUpForm);

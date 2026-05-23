@@ -15,6 +15,20 @@
   --text-dim: #555566;
 }
 
+/* Light theme overrides */
+[data-theme="light"] {
+  --bg-deep: #f8fafc;
+  --bg-mid: #ffffff;
+  --bg-card: #f1f5f9;
+  --neon-primary: #10b981;
+  --neon-secondary: #f43f5e;
+  --neon-accent: #0ea5e9;
+  --neon-warning: #f59e0b;
+  --text-bright: #0f172a;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+}
+
 * {
   margin: 0;
   padding: 0;

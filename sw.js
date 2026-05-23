@@ -1,11 +1,15 @@
-const CACHE_NAME = 'auraquest-v1';
+const CACHE_NAME = 'auraquest-v2';
 const ASSETS = [
   '/',
   '/index.html',
   '/app.js',
   '/workouts.js',
   '/style.css',
-  '/manifest.json'
+  '/manifest.json',
+  '/offline.html',
+  '/login.html',
+  '/login.css',
+  '/login.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -30,10 +34,22 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  // Handle navigation requests (HTML pages)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        // Network failed, return offline page from cache
+        return caches.match('/offline.html');
+      })
+    );
+    return;
+  }
+
+  // For other assets: cache-first strategy
   event.respondWith(
     caches.match(event.request).then((cached) => {
       return cached || fetch(event.request).then((response) => {
-        // Cache new assets dynamically (optional)
         if (response.status === 200) {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {

@@ -118,6 +118,73 @@ Real-time statistics display:
 
 ---
 
+### 📈 Progress Charts
+
+- Interactive line graph showing XP earned per workout
+- Updates automatically after each completed workout
+- Theme‑aware colors that match your selected dark/light mode
+- Powered by Chart.js with responsive canvas
+
+---
+
+### 🏆 Leaderboard
+
+- Global rankings across all registered users
+- Sorted by level and XP (highest first)
+- Highlights your own entry for quick reference
+- Displays Level, Workouts, and Streak for each warrior
+- Access via the 🏆 button in the top‑right header
+
+---
+
+### 🎬 YouTube Video Tutorials
+
+- Each exercise includes a "Watch Tutorial" link in the instructions panel
+- Opens YouTube search for the exercise name + "exercise technique"
+- Study proper form before attempting advanced moves
+- Learn variations and progressions from expert creators
+
+---
+
+### 👥 Social Sharing
+
+- Share your achievements and progress directly to social platforms
+- One‑click sharing to Twitter, Facebook, and LinkedIn
+- Copy your stats to clipboard with the 📋 button
+- Pre‑filled messages include your current level, XP, and streak
+- Access the share panel at the bottom of the dashboard
+
+---
+
+### 💾 CSV Export
+
+- Export your workout history to a CSV file with one click
+- Download includes columns: Workout, XP, Time of day
+- Filename includes current date for easy organization
+- Analyze your progress in spreadsheet software or backup your data
+
+---
+
+### 🎵 Background Workout Playlist
+
+- Play energizing music while you workout to stay motivated
+- Toggle on/off via the 🎵 button in the top‑right header
+- Single looping track included; replace with your own playlist URL in `app.js`
+- Volume adjustable via system controls (default 50%)
+- Music pauses automatically when workout timer starts
+
+---
+
+### 📡 Offline Mode (PWA)
+
+- Service worker caches core assets for offline access
+- Once loaded, the app works without an internet connection
+- Automatic background updates when back online
+- Offline fallback page displays when navigation fails while offline
+- Installable on home screen via native browser prompt
+
+---
+
 ### 🎯 RPG Progression System
 
 - **Levels** - Increase through XP gain (1.5x multiplier each level)
@@ -135,6 +202,19 @@ Real-time statistics display:
 - Optimized for smartphone, tablet, and desktop
 - Accessibility features with ARIA labels
 - Support for prefers-reduced-motion
+
+---
+
+### 🌙 Dark/Light Theme Toggle
+
+Switch between dark and light modes to match your environment and preferences:
+
+- **Toggle Button** - Located in the top-right header (🌙/☀️ icon)
+- **Autosave** - Preference stored per user in localStorage
+- **Full Coverage** - Both login page and main dashboard respect the theme
+- **Seamless** - Instant switch, no page reload required
+
+The dark theme provides an energy‑saving, sleek interface ideal for low‑light workouts. The light theme offers maximum readability in bright environments. Both themes preserve AuraQuest's signature neon accents and visual hierarchy.
 
 ---
 
@@ -156,6 +236,37 @@ Text-to-speech instructor guidance:
 - Volume and speech rate controls
 - Countdown audio cues
 - Workout-specific instructions
+
+---
+
+## 🎪 Seasonal Challenges
+
+- Rotating quarterly challenges aligned with the seasons
+- Each season has a unique focus: workouts, XP, steps, or streak
+- Progress tracked automatically; rewards large XP bonuses
+- Dashboard card displays current season, goal, and progress
+- Resets at the start of each new season (March, June, September, December)
+
+---
+
+## 🏋️ Personal Records
+
+- Tracks your best performance on timed exercises
+- Shows your longest hold times for planks, wall sits, and more
+- Personal bests displayed in a dedicated section
+- Get notified when you beat your own record
+- Motivates continuous improvement and goal setting
+
+---
+
+## ⭐ Rate the App
+
+- Found in the header (⭐ button) next to other controls
+- Click to open the rating modal with 5 stars
+- Your rating is saved per user account
+- Community average and total count displayed in real-time
+- Only one rating per user; you can update it anytime
+- Feedback helps shape future improvements
 
 ---
 

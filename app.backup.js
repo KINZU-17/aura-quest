@@ -35,10 +35,6 @@ let instructor = null;
 let currentTimer = null;
 let stepDetectionActive = false;
 let lastStepTime = 0;
-let currentTheme = 'dark';
-let backgroundMusic = null;
-let reminderInterval = null;
-let selectedDifficulty = 'all';
 
 // ============================================
 // UTILITY FUNCTIONS
@@ -197,8 +193,6 @@ function completeActivity(name, xpGained) {
       renderStatsPanel(user, achievements);
     }
   }
-
-  if (typeof renderProgressChart !== 'undefined') renderProgressChart(user);
 }
 
 function resetUser() {
@@ -238,8 +232,6 @@ function updateUI() {
   if (stepCountEl) stepCountEl.textContent = user.steps.toLocaleString();
 
   renderHistory();
-  renderUserStarRating();
-  updateShareLinks();
 }
 
 function renderWorkouts() {
@@ -248,16 +240,7 @@ function renderWorkouts() {
 
   container.innerHTML = '';
 
-  const filtered = selectedDifficulty === 'all'
-    ? workoutData
-    : workoutData.filter(w => w.difficulty === parseInt(selectedDifficulty));
-
-  if (filtered.length === 0) {
-    container.innerHTML = '<div class="history-empty">No workouts match this difficulty.</div>';
-    return;
-  }
-
-  filtered.forEach(workout => {
+  workoutData.forEach(workout => {
     const card = document.createElement('div');
     card.className = 'workout-card';
     card.dataset.id = workout.id;
@@ -304,386 +287,6 @@ function renderHistory() {
       <span class="history-time">${escapeHTML(entry.time)}</span>
     `;
     container.appendChild(item);
-  });
-}
-
-function calculateUserStarRating(user) {
-  if (!user) return 1;
-
-  const levelScore = Math.min(user.level / 10, 1);
-  const xpScore = user.xpToNext > 0 ? Math.min(user.xp / user.xpToNext, 1) : 1;
-  const streakScore = Math.min(user.streak / 7, 1);
-  const historyScore = user.history.length > 0 ? Math.min(user.history.reduce((sum, entry) => sum + entry.xp, 0) / (user.history.length * 50), 1) : 0.2;
-
-  const total = levelScore * 0.35 + xpScore * 0.25 + streakScore * 0.25 + historyScore * 0.15;
-  return Math.max(1, Math.min(5, Math.round(total * 5)));
-}
-
-function renderUserStarRating() {
-  const el = document.getElementById('user-star-rating');
-  if (!el || !user) return;
-
-  const stars = calculateUserStarRating(user);
-  const filled = '★'.repeat(stars).padEnd(5, '☆');
-  const tooltipMap = [
-    'Needs more training',
-    'Getting stronger',
-    'Solid warrior',
-    'Elite fighter',
-    'Legendary warrior'
-  ];
-
-  el.textContent = filled;
-  el.title = `${tooltipMap[stars - 1]} — Performance Stars: ${stars}/5`;
-}
-
-function requestNotificationPermission() {
-  if (!('Notification' in window)) return Promise.resolve(false);
-  if (Notification.permission === 'granted') return Promise.resolve(true);
-  if (Notification.permission !== 'denied') {
-    return Notification.requestPermission().then(permission => permission === 'granted');
-  }
-  return Promise.resolve(false);
-}
-
-function getReminderKey() {
-  return 'auraQuest_reminders_enabled';
-}
-
-function isReminderEnabled() {
-  try {
-    return localStorage.getItem(getReminderKey()) === 'true';
-  } catch (e) {
-    return false;
-  }
-}
-
-function setReminderEnabled(value) {
-  try {
-    localStorage.setItem(getReminderKey(), value ? 'true' : 'false');
-  } catch (e) {
-    console.warn('Reminder save failed:', e);
-  }
-}
-
-function showWorkoutReminder() {
-  const message = 'Your AuraQuest is waiting — complete a workout to keep your streak alive!';
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification('AuraQuest Reminder', { body: message, icon: 'favicon.ico' });
-  } else if (typeof showNotification !== 'undefined') {
-    showNotification(message, 'info');
-  }
-}
-
-function scheduleReminder() {
-  if (reminderInterval) {
-    clearInterval(reminderInterval);
-    reminderInterval = null;
-  }
-
-  if (!isReminderEnabled()) return;
-
-  reminderInterval = setInterval(() => {
-    const now = new Date();
-    if (now.getHours() === 18 && now.getMinutes() === 0) {
-      showWorkoutReminder();
-    }
-  }, 60000);
-}
-
-function updateReminderToggleUI() {
-  const btn = document.getElementById('reminder-toggle');
-  if (!btn) return;
-  btn.classList.toggle('active', isReminderEnabled());
-  btn.title = isReminderEnabled() ? 'Workout reminders on' : 'Enable workout reminders';
-}
-
-function toggleReminderSetting() {
-  const enabled = !isReminderEnabled();
-  setReminderEnabled(enabled);
-  updateReminderToggleUI();
-
-  if (enabled) {
-    requestNotificationPermission().then(granted => {
-      if (granted) {
-        showNotification('Workout reminders enabled for 6PM local time.', 'success');
-      } else {
-        showNotification('Browser notifications blocked. Reminders will show in-app only.', 'warning');
-      }
-      scheduleReminder();
-    });
-  } else {
-    if (reminderInterval) {
-      clearInterval(reminderInterval);
-      reminderInterval = null;
-    }
-    showNotification('Workout reminders disabled.', 'info');
-  }
-}
-
-function setupReminderToggle() {
-  const btn = document.getElementById('reminder-toggle');
-  if (!btn) return;
-  btn.addEventListener('click', toggleReminderSetting);
-  updateReminderToggleUI();
-}
-
-// ============================================
-// THEME SYSTEM
-// ============================================
-function setTheme(theme) {
-  currentTheme = theme;
-  document.documentElement.setAttribute('data-theme', theme);
-  const btn = document.getElementById('theme-toggle');
-  if (btn) btn.textContent = theme === 'dark' ? '🌙' : '☀️';
-  try { localStorage.setItem('auraQuest_theme', theme); } catch(e) {}
-  if (typeof renderProgressChart !== 'undefined' && user) renderProgressChart(user);
-}
-
-function loadTheme() {
-  try {
-    const saved = localStorage.getItem('auraQuest_theme') || 'dark';
-    setTheme(saved);
-  } catch(e) { setTheme('dark'); }
-}
-
-function setupThemeToggle() {
-  const btn = document.getElementById('theme-toggle');
-  if (!btn) return;
-  btn.addEventListener('click', () => setTheme(currentTheme === 'dark' ? 'light' : 'dark'));
-}
-
-// ============================================
-// LEADERBOARD MODAL
-// ============================================
-function openLeaderboard() {
-  const modal = document.getElementById('leaderboard-modal');
-  if (!modal) return;
-  if (typeof renderLeaderboard !== 'undefined') renderLeaderboard();
-  modal.classList.remove('hidden');
-}
-
-function closeLeaderboard() {
-  const modal = document.getElementById('leaderboard-modal');
-  if (modal) modal.classList.add('hidden');
-}
-
-function setupLeaderboard() {
-  const openBtn = document.getElementById('leaderboard-toggle');
-  const closeBtn = document.getElementById('close-leaderboard');
-  const modal = document.getElementById('leaderboard-modal');
-  if (openBtn) openBtn.addEventListener('click', openLeaderboard);
-  if (closeBtn) closeBtn.addEventListener('click', closeLeaderboard);
-  if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeLeaderboard(); });
-}
-
-// ============================================
-// BACKGROUND MUSIC
-// ============================================
-function setupMusic() {
-  const btn = document.getElementById('music-toggle');
-  if (!btn) return;
-
-  backgroundMusic = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
-  backgroundMusic.loop = true;
-  backgroundMusic.volume = 0.5;
-
-  btn.addEventListener('click', () => {
-    if (backgroundMusic.paused) {
-      backgroundMusic.play().catch(() => {});
-      btn.textContent = '🎵';
-      try { localStorage.setItem('auraQuest_music', 'on'); } catch(e) {}
-    } else {
-      backgroundMusic.pause();
-      btn.textContent = '🔇';
-      try { localStorage.setItem('auraQuest_music', 'off'); } catch(e) {}
-    }
-  });
-}
-
-// ============================================
-// RATING MODAL
-// ============================================
-const RATINGS_KEY = 'auraQuest_ratings';
-
-function loadRatings() {
-  try { return JSON.parse(localStorage.getItem(RATINGS_KEY)) || {}; } catch(e) { return {}; }
-}
-
-function saveRatings(ratings) {
-  try { localStorage.setItem(RATINGS_KEY, JSON.stringify(ratings)); } catch(e) {}
-}
-
-function getRatingStats() {
-  const values = Object.values(loadRatings());
-  if (values.length === 0) return { avg: 0, count: 0 };
-  const avg = values.reduce((a, b) => a + b, 0) / values.length;
-  return { avg: Math.round(avg * 10) / 10, count: values.length };
-}
-
-function setupRatingModal() {
-  const openBtn = document.getElementById('rating-toggle');
-  const closeBtn = document.getElementById('close-rating');
-  const modal = document.getElementById('rating-modal');
-  const submitBtn = document.getElementById('rating-submit');
-  const starsContainer = document.getElementById('stars-container');
-  if (!modal) return;
-
-  let selectedRating = 0;
-
-  function getUsername() {
-    try { return JSON.parse(localStorage.getItem('activeSession')).username; } catch(e) { return 'anonymous'; }
-  }
-
-  function updateStars(value) {
-    if (!starsContainer) return;
-    starsContainer.querySelectorAll('.star').forEach((star, i) => {
-      const filled = i < value;
-      star.classList.toggle('filled', filled);
-      star.textContent = filled ? '★' : '☆';
-    });
-  }
-
-  function updateRatingInfo() {
-    const infoEl = document.getElementById('current-rating-display');
-    const stats = getRatingStats();
-    if (infoEl) {
-      infoEl.textContent = stats.count > 0
-        ? `Community rating: ${stats.avg}/5 (${stats.count} rating${stats.count !== 1 ? 's' : ''})`
-        : 'No ratings yet — be the first!';
-    }
-  }
-
-  function openRating() {
-    const ratings = loadRatings();
-    selectedRating = ratings[getUsername()] || 0;
-    updateStars(selectedRating);
-    updateRatingInfo();
-    if (submitBtn) submitBtn.disabled = selectedRating === 0;
-    modal.classList.remove('hidden');
-  }
-
-  if (starsContainer) {
-    starsContainer.querySelectorAll('.star').forEach(star => {
-      const val = parseInt(star.dataset.value);
-      star.addEventListener('mouseover', () => updateStars(val));
-      star.addEventListener('mouseout', () => updateStars(selectedRating));
-      star.addEventListener('click', () => {
-        selectedRating = val;
-        updateStars(selectedRating);
-        if (submitBtn) submitBtn.disabled = false;
-      });
-    });
-  }
-
-  if (submitBtn) {
-    submitBtn.addEventListener('click', () => {
-      const ratings = loadRatings();
-      ratings[getUsername()] = selectedRating;
-      saveRatings(ratings);
-      updateRatingInfo();
-      if (typeof showNotification !== 'undefined') {
-        showNotification(`You rated AuraQuest ${selectedRating}/5 stars! Thanks!`, 'success');
-      }
-      modal.classList.add('hidden');
-    });
-  }
-
-  if (openBtn) openBtn.addEventListener('click', openRating);
-  if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
-  if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
-}
-
-// ============================================
-// CSV EXPORT
-// ============================================
-function exportCSV() {
-  if (!user || !user.history.length) {
-    if (typeof showNotification !== 'undefined') showNotification('No workout history to export.', 'warning');
-    return;
-  }
-  const rows = [['Workout', 'XP', 'Time'].join(',')].concat(
-    user.history.map(e => [
-      `"${(e.name || '').replace(/"/g, '""')}"`,
-      e.xp,
-      `"${(e.time || '').replace(/"/g, '""')}"`
-    ].join(','))
-  );
-  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `auraquest-history-${new Date().toISOString().slice(0, 10)}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-function setupCSVExport() {
-  const btn = document.getElementById('export-csv-btn');
-  if (btn) btn.addEventListener('click', exportCSV);
-}
-
-// ============================================
-// SHARE PANEL
-// ============================================
-function getShareText() {
-  if (!user) return 'Check out AuraQuest — the gamified fitness app!';
-  return `I'm Level ${user.level} ${user.rank} on AuraQuest with a ${user.streak}-day streak! Join me on my fitness quest! 🏆⚔️`;
-}
-
-function updateShareLinks() {
-  const text = encodeURIComponent(getShareText());
-  const appUrl = encodeURIComponent('https://github.com/james-nzuki/aura-quest');
-
-  const twitter = document.querySelector('.share-btn.twitter');
-  const facebook = document.querySelector('.share-btn.facebook');
-  const linkedin = document.querySelector('.share-btn.linkedin');
-  if (twitter) twitter.href = `https://twitter.com/intent/tweet?text=${text}`;
-  if (facebook) facebook.href = `https://www.facebook.com/sharer/sharer.php?u=${appUrl}&quote=${text}`;
-  if (linkedin) linkedin.href = `https://www.linkedin.com/sharing/share-offsite/?url=${appUrl}`;
-
-  const copyBtn = document.getElementById('copy-progress-btn');
-  if (copyBtn && !copyBtn.dataset.wired) {
-    copyBtn.dataset.wired = '1';
-    copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(getShareText()).then(() => {
-        if (typeof showNotification !== 'undefined') showNotification('Copied to clipboard!', 'success');
-      }).catch(() => {
-        if (typeof showNotification !== 'undefined') showNotification('Copy not supported here.', 'warning');
-      });
-    });
-  }
-}
-
-// ============================================
-// DIFFICULTY FILTER
-// ============================================
-function renderDifficultySelector() {
-  const container = document.getElementById('difficulty-selector');
-  if (!container) return;
-
-  container.className = 'difficulty-selector';
-  container.innerHTML = `
-    <h4>Filter by Difficulty</h4>
-    <div class="difficulty-buttons">
-      <button class="diff-btn active" data-diff="all">All</button>
-      <button class="diff-btn" data-diff="1">★</button>
-      <button class="diff-btn" data-diff="2">★★</button>
-      <button class="diff-btn" data-diff="3">★★★</button>
-      <button class="diff-btn" data-diff="4">★★★★</button>
-      <button class="diff-btn" data-diff="5">★★★★★</button>
-    </div>
-  `;
-
-  container.querySelectorAll('.diff-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      container.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      selectedDifficulty = btn.dataset.diff;
-      renderWorkouts();
-    });
   });
 }
 
@@ -820,7 +423,6 @@ function getInstructionsPanel() {
         <h3 class="instructions-title"></h3>
         <div class="instructions-steps"></div>
         <p class="instructions-tips"></p>
-        <a class="tutorial-link" id="tutorial-link" target="_blank" rel="noopener noreferrer">🎬 Watch Tutorial</a>
         <button class="begin-btn modal-btn">BEGIN WORKOUT</button>
       </div>
     `;
@@ -854,11 +456,6 @@ function openInstructions(workout) {
     ).join('');
   }
   if (tipsEl) tipsEl.textContent = workout.tips || '';
-
-  const tutorialLink = panel.querySelector('#tutorial-link');
-  if (tutorialLink) {
-    tutorialLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(workout.name + ' exercise technique')}`;
-  }
 
   if (beginBtn) {
     beginBtn.removeEventListener('click', beginHandler);
@@ -1058,20 +655,11 @@ function init() {
     initializeFeatures();
   }
 
-  loadTheme();
   user = loadUser();
   displayWelcomeUser();
   updateUI();
-  renderDifficultySelector();
   renderWorkouts();
   setupLogout();
-  setupThemeToggle();
-  setupLeaderboard();
-  setupMusic();
-  setupRatingModal();
-  setupCSVExport();
-  setupReminderToggle();
-  scheduleReminder();
   initPedometer();
 
   // Load and display achievements/stats
@@ -1079,8 +667,6 @@ function init() {
     const achievements = loadAchievements();
     renderStatsPanel(user, achievements);
   }
-
-  if (typeof renderProgressChart !== 'undefined') renderProgressChart(user);
 
   if (typeof AudioInstructor !== 'undefined') {
     instructor = new AudioInstructor();

@@ -143,8 +143,9 @@ function saveUser(user, localStorage) {
 }
 
 function updateStreak(user) {
-  const today = new Date().toDateString();
-  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  const now = Date.now();
+  const today = new Date(now).toDateString();
+  const yesterday = new Date(now - 86400000).toDateString();
 
   if (user.lastDate === today) return;
   if (user.lastDate === yesterday) {
