@@ -185,7 +185,9 @@ class AudioInstructor {
   }
 }
 
-let instructor = null;
+// NOTE: the global `instructor` is declared in app.js (GLOBAL STATE).
+// Declaring it here too caused a duplicate-declaration SyntaxError that
+// broke app.js. This file assigns/uses that shared global.
 
 function initInstructor() {
   instructor = new AudioInstructor();

@@ -166,10 +166,19 @@ function calculateXpPercent() {
 function completeActivity(name, xpGained) {
   if (!user) return;
 
-  user.xp += xpGained;
+  const prevLevel = user.level;
+
+  // Reward back-to-back sessions with a combo bonus + hype
+  let comboBonus = 0;
+  if (window.AuraJuice) {
+    comboBonus = AuraJuice.combo().bonus || 0;
+  }
+  const totalXp = xpGained + comboBonus;
+
+  user.xp += totalXp;
   user.history.unshift({
     name,
-    xp: xpGained,
+    xp: totalXp,
     time: new Date().toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
   });
 
@@ -179,6 +188,20 @@ function completeActivity(name, xpGained) {
   updateStreak();
   saveUser();
   updateUI();
+
+  const leveledUp = user.level > prevLevel;
+  if (leveledUp && typeof showLevelUpAnimation !== 'undefined') {
+    showLevelUpAnimation(user.level);
+  }
+  if (window.AuraJuice) {
+    AuraJuice.celebrate({
+      xp: totalXp,
+      name: name,
+      leveledUp,
+      newLevel: user.level,
+      streak: user.streak
+    });
+  }
 
   // Update achievements
   if (typeof updateAchievements !== 'undefined' && typeof loadAchievements !== 'undefined') {
@@ -231,11 +254,26 @@ function updateUI() {
     const percent = calculateXpPercent();
     xpFillEl.className = 'xp-bar-fill ' + getXpWidthClass(percent);
   }
-  if (currentXpEl) currentXpEl.textContent = Math.floor(user.xp);
+  if (currentXpEl) {
+    const prevXp = parseInt(currentXpEl.textContent.replace(/[^\d-]/g, '')) || 0;
+    const nextXp = Math.floor(user.xp);
+    if (window.AuraJuice) {
+      AuraJuice.animateCount(currentXpEl, prevXp, nextXp);
+    } else {
+      currentXpEl.textContent = nextXp;
+    }
+  }
   if (nextLevelXpEl) nextLevelXpEl.textContent = user.xpToNext;
 
   const stepCountEl = document.getElementById('step-count');
-  if (stepCountEl) stepCountEl.textContent = user.steps.toLocaleString();
+  if (stepCountEl) {
+    const prevSteps = parseInt(stepCountEl.textContent.replace(/[^\d-]/g, '')) || 0;
+    if (window.AuraJuice && prevSteps !== user.steps) {
+      AuraJuice.animateCount(stepCountEl, prevSteps, user.steps, 400);
+    } else {
+      stepCountEl.textContent = user.steps.toLocaleString();
+    }
+  }
 
   renderHistory();
   renderUserStarRating();

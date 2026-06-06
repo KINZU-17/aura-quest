@@ -1,9 +1,12 @@
-const CACHE_NAME = 'auraquest-v2';
+const CACHE_NAME = 'auraquest-v3';
 const ASSETS = [
   '/',
   '/index.html',
   '/app.js',
   '/workouts.js',
+  '/features.js',
+  '/juice.js',
+  '/instructor.js',
   '/style.css',
   '/manifest.json',
   '/offline.html',

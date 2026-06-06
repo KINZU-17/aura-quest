@@ -167,10 +167,13 @@ class AudioManager {
   }
 
   playTone(frequency = 600, duration = 100, volume = 0.3) {
-    if (!this.enabled || !this.audioContext) return;
+    if (!this.enabled) return;
+    this.initialize();
+    if (!this.audioContext) return;
 
     try {
-      this.initialize();
+      // Resume if the context was suspended (autoplay policy)
+      if (this.audioContext.state === 'suspended') this.audioContext.resume();
       const now = this.audioContext.currentTime;
       const osc = this.audioContext.createOscillator();
       const gain = this.audioContext.createGain();

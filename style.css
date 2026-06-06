@@ -11,6 +11,9 @@
   --accent-purple: #7000ff;
   --accent-cyan: #00f2fe;
   --accent-green: #00ff88;
+  --accent-pink: #ff2e9a;
+  --accent-orange: #ff8a00;
+  --accent-yellow: #ffe14d;
   --text-primary: #ffffff;
   --text-secondary: #b0b0b0;
   --border-color: #222;
@@ -30,6 +33,9 @@
   --accent-purple: #7c3aed;
   --accent-cyan: #0891b2;
   --accent-green: #10b981;
+  --accent-pink: #ec4899;
+  --accent-orange: #f97316;
+  --accent-yellow: #f59e0b;
   --success: #22c55e;
   --warning: #eab308;
   --danger: #ef4444;
@@ -1640,4 +1646,340 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--accent-cyan);
   box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
 }
+
+/* ============================================
+   ✨ VIBRANT & ENERGETIC THEME LAYER
+   Fun, motivating polish layered on top.
+   ============================================ */
+
+/* Animated "aurora" backdrop — sits behind everything */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 50% at 15% 10%, rgba(112, 0, 255, 0.28), transparent 60%),
+    radial-gradient(45% 55% at 85% 15%, rgba(0, 242, 254, 0.22), transparent 60%),
+    radial-gradient(50% 50% at 75% 85%, rgba(255, 46, 154, 0.20), transparent 60%),
+    radial-gradient(45% 55% at 20% 90%, rgba(0, 255, 136, 0.18), transparent 60%);
+  background-size: 200% 200%;
+  animation: auroraShift 18s ease-in-out infinite;
+}
+
+[data-theme="light"] body::before {
+  opacity: 0.5;
+}
+
+@keyframes auroraShift {
+  0%   { background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%; }
+  50%  { background-position: 100% 50%, 0% 50%, 0% 0%, 100% 0%; }
+  100% { background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%; }
+}
+
+/* Punchier header: gradient underline glow */
+.top-nav {
+  border-bottom: none;
+  box-shadow: 0 4px 24px rgba(112, 0, 255, 0.25);
+  background-image: linear-gradient(var(--bg-secondary), var(--bg-secondary)),
+    linear-gradient(90deg, var(--accent-purple), var(--accent-pink), var(--accent-cyan));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  border-bottom: 3px solid transparent;
+}
+
+/* Level badge: lively pop + soft float */
+.level-indicator {
+  background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple), var(--accent-cyan));
+  background-size: 200% 200%;
+  animation: badgeGlow 5s ease infinite;
+  box-shadow: 0 0 22px rgba(255, 46, 154, 0.45);
+}
+
+@keyframes badgeGlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Streak badge pulses with life */
+.rank-badge span:first-child {
+  display: inline-block;
+  animation: flameFlicker 1.6s ease-in-out infinite;
+}
+
+@keyframes flameFlicker {
+  0%, 100% { transform: scale(1) rotate(-3deg); }
+  50% { transform: scale(1.2) rotate(3deg); }
+}
+
+/* XP bar: shimmering, alive */
+.xp-bar-fill {
+  background: linear-gradient(90deg,
+    var(--accent-purple), var(--accent-pink),
+    var(--accent-orange), var(--accent-cyan), var(--accent-green));
+  background-size: 250% 100%;
+  animation: xpShimmer 3s linear infinite;
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.6);
+}
+
+@keyframes xpShimmer {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 250% 0%; }
+}
+
+/* Section titles: gradient text energy */
+.section-title {
+  border-bottom: none;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink), transparent);
+}
+
+/* Workout cards: bouncier, glowier, tappable feel */
+.workout-card {
+  border-radius: 16px;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+}
+
+.workout-card:hover {
+  transform: translateX(6px) translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(112, 0, 255, 0.35);
+}
+
+.workout-card:active {
+  transform: scale(0.97);
+}
+
+.xp-reward {
+  background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Step card number glow boost */
+.step-count {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Begin/modal CTA buttons feel more alive */
+.modal-btn {
+  background-size: 180% 180%;
+  animation: badgeGlow 5s ease infinite;
+}
+
+/* ============================================
+   🎉 JUICE: confetti, XP popups, hype, combo
+   ============================================ */
+.juice-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 14px;
+  border-radius: 2px;
+  will-change: transform, opacity;
+}
+
+.screen-flash {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(255, 232, 77, 0.7), rgba(74, 222, 128, 0.4));
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.xp-popup {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: 1.6rem;
+  color: var(--accent-green);
+  text-shadow: 0 0 14px rgba(0, 255, 136, 0.8);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.hype-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18%;
+  transform: translateX(-50%);
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+  box-shadow: 0 10px 30px rgba(255, 46, 154, 0.45);
+  pointer-events: none;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.hype-toast.levelup {
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink), var(--accent-purple));
+  font-size: 1.1rem;
+}
+
+.hype-toast.complete {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
+}
+
+.hype-toast.combo {
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-yellow));
+  color: #1a1a1a;
+}
+
+.hype-toast.streak {
+  background: linear-gradient(135deg, var(--danger), var(--accent-orange));
+}
+
+.combo-meter {
+  position: fixed;
+  top: 90px;
+  right: 16px;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink));
+  color: #fff;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(255, 138, 0, 0.5);
+  opacity: 0;
+  transform: scale(0.6) translateX(20px);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.combo-meter.show {
+  opacity: 1;
+  transform: scale(1) translateX(0);
+}
+
+.combo-meter.bump {
+  animation: comboBump 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes comboBump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.25) rotate(-3deg); }
+  100% { transform: scale(1); }
+}
+
+.combo-meter .combo-flame { font-size: 1.2rem; }
+.combo-meter .combo-count { font-size: 1.3rem; }
+.combo-meter .combo-label { font-size: 0.65rem; letter-spacing: 1px; opacity: 0.85; }
+
+/* ============================================
+   TOAST NOTIFICATIONS (were previously unstyled!)
+   ============================================ */
+.notification {
+  position: fixed;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9990;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--accent-purple);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  max-width: 90vw;
+  text-align: center;
+  animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: opacity 0.3s ease;
+}
+
+.notification-success { border-color: var(--success); box-shadow: 0 10px 30px rgba(74, 222, 128, 0.35); }
+.notification-warning { border-color: var(--warning); box-shadow: 0 10px 30px rgba(251, 191, 36, 0.35); }
+.notification-info    { border-color: var(--accent-cyan); box-shadow: 0 10px 30px rgba(0, 242, 254, 0.3); }
+
+/* ============================================
+   ACHIEVEMENT UNLOCK POPUP (were previously unstyled!)
+   ============================================ */
+.achievement-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9995;
+  pointer-events: none;
+  animation: achievementPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.achievement-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 32px;
+  border-radius: 18px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+  border: 2px solid var(--accent-yellow);
+  box-shadow: 0 20px 60px rgba(255, 46, 154, 0.5);
+}
+
+.achievement-popup .achievement-icon {
+  font-size: 3rem;
+  animation: flameFlicker 1.2s ease-in-out infinite;
+}
+
+.achievement-popup .achievement-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.achievement-popup .achievement-desc {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+@keyframes achievementPop {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+  60% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@media (max-width: 600px) {
+  .combo-meter { top: auto; bottom: 80px; right: 12px; }
 }
