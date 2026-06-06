@@ -13,6 +13,15 @@ function showForm(formToShow) {
     signUpForm.classList.remove('active');
     forgetPasswordForm.classList.remove('active');
     formToShow.classList.add('active');
+
+    // Clear any error messages when switching forms
+    ['loginWarning', 'signUpWarning', 'forgetWarning'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = '';
+            el.classList.remove('show');
+        }
+    });
 }
 
 // Theme initialization
@@ -82,13 +91,21 @@ btn.addEventListener('mouseover', () => {
 // Login - redirects to app ONLY on success
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    if (userInp.value.trim() === "" || passInp.value.trim() === "") {
-        alert("The button is trying to tell you something... Please fill the fields.");
+    const loginWarning = document.getElementById('loginWarning');
+    loginWarning.textContent = '';
+    loginWarning.classList.remove('show');
+
+    const username = userInp.value.trim();
+    const password = passInp.value.trim();
+
+    if (username === "" || password === "") {
+        showLoginError('Please enter your username and password.');
         return;
     }
 
     const users = getUsers();
-    const user = users.find(u => u.username === userInp.value.trim() && u.password === passInp.value.trim());
+    const userExists = users.find(u => u.username === username);
+    const user = users.find(u => u.username === username && u.password === password);
 
     if (user) {
         // Save session
@@ -102,12 +119,26 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         if (guestData) {
             localStorage.setItem(`auraQuest_${user.username}`, guestData);
         }
-        alert("Access Granted! Welcome to AuraQuest, " + user.username + "!");
         window.location.href = 'index.html';
+    } else if (userExists) {
+        // Username is right but the password is wrong
+        showLoginError('Incorrect password. Please try again.');
+        passInp.value = '';
+        passInp.focus();
     } else {
-        alert("Invalid username or password. Please sign up if you don't have an account.");
+        showLoginError("No account found with that username. Please create an account.");
     }
 });
+
+function showLoginError(message) {
+    const loginWarning = document.getElementById('loginWarning');
+    loginWarning.textContent = message;
+    loginWarning.classList.add('show');
+    // Re-trigger the shake animation
+    loginWarning.classList.remove('shake');
+    void loginWarning.offsetWidth;
+    loginWarning.classList.add('shake');
+}
 
 // Sign up - MANDATORY
 // Only registered users can access the app
@@ -121,6 +152,7 @@ document.getElementById('signUpForm').addEventListener('submit', function(e) {
     const warning = document.getElementById('signUpWarning');
 
     warning.textContent = '';
+    warning.classList.remove('success');
 
     if (!email || !username || !password || !confirmPassword) {
         warning.textContent = 'Please fill all fields';
@@ -161,15 +193,18 @@ document.getElementById('signUpForm').addEventListener('submit', function(e) {
         loggedInAt: new Date().toISOString()
     }));
 
-    alert('Account created! Welcome to AuraQuest, ' + username + '!');
-    
     // Link any existing guest progress
     const guestData = localStorage.getItem('auraQuest_Warrior');
     if (guestData) {
         localStorage.setItem(`auraQuest_${username}`, guestData);
     }
-    
-    window.location.href = 'index.html';
+
+    // Show a success banner, then head into the app
+    warning.classList.add('success');
+    warning.textContent = '🎉 Account created! Welcome to AuraQuest, ' + username + '!';
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 1200);
 });
 
 // Forget password
@@ -180,6 +215,7 @@ document.getElementById('forgetPasswordForm').addEventListener('submit', functio
     const warning = document.getElementById('forgetWarning');
 
     warning.textContent = '';
+    warning.classList.remove('success');
 
     if (!email) {
         warning.textContent = 'Please enter your email';
@@ -190,12 +226,12 @@ document.getElementById('forgetPasswordForm').addEventListener('submit', functio
     const user = users.find(u => u.email === email);
 
     if (user) {
-        alert('Password reset link sent to ' + email + '. (Demo: use this account to login)');
+        warning.classList.add('success');
+        warning.textContent = '✅ Reset link sent to ' + email + '. (Demo: log in with this account.)';
         console.log('Reset code for ' + user.username + ': Use password to login');
-        showForm(loginForm);
+        document.getElementById('forgetEmail').value = '';
+        setTimeout(() => showForm(loginForm), 1800);
     } else {
         warning.textContent = 'Email not found. Please sign up for an account.';
     }
-
-    document.getElementById('forgetEmail').value = '';
 });

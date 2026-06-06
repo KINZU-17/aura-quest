@@ -298,7 +298,44 @@ body {
   background: rgba(255, 0, 102, 0.1);
   border-radius: 8px;
   border-left: 3px solid var(--neon-secondary);
+  display: none;
+}
+/* Only show the box once it has a message */
+#signUpWarning:not(:empty), #forgetWarning:not(:empty) {
   display: block;
+}
+
+/* Success state (account created, reset sent) */
+#signUpWarning.success, #forgetWarning.success {
+  color: var(--neon-success, #22c55e);
+  background: rgba(34, 197, 94, 0.12);
+  border-left-color: var(--neon-success, #22c55e);
+}
+
+/* Inline field warning (e.g. wrong password under the input) */
+.field-warning {
+  color: var(--neon-secondary);
+  font-size: 0.8rem;
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 0, 102, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid var(--neon-secondary);
+  display: none;
+}
+.field-warning.show {
+  display: block;
+}
+.field-warning.shake {
+  animation: warning-shake 0.4s ease;
+}
+
+@keyframes warning-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
 }
 
 /* Reduced motion */

@@ -24,6 +24,7 @@
                 <div class="form-group">
                     <label>Password</label>
                     <input type="password" id="password" class="form-input" placeholder="Enter password" required>
+                    <div id="loginWarning" class="field-warning" role="alert" aria-live="polite"></div>
                 </div>
                 <button type="submit" class="btn-power" id="vanishBtn">LOGIN</button>
                 <div class="form-switch">
@@ -51,6 +52,7 @@
                     <label>Confirm Password</label>
                     <input type="password" id="signUpConfirmPassword" class="form-input" placeholder="Confirm password" required>
                 </div>
+                <div id="signUpWarning" role="alert" aria-live="polite"></div>
                 <button type="submit" class="btn-power" id="signUpBtn">CREATE ACCOUNT</button>
                 <div class="form-switch">
                     <span>Already have an Account? <a href="#" id="loginLink">Login</a></span>
@@ -62,6 +64,7 @@
                     <label>Email</label>
                     <input type="email" id="forgetEmail" class="form-input" placeholder="your@email.com" required>
                 </div>
+                <div id="forgetWarning" role="alert" aria-live="polite"></div>
                 <button type="submit" class="btn-power" id="resetBtn">SEND RESET LINK</button>
                 <div class="form-switch">
                     <a href="#" id="backToLoginLink">Back to Login</a>
